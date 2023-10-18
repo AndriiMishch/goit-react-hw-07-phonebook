@@ -1,30 +1,27 @@
 import ContactFilter from 'components/Filter';
 import ContactListItem from './UserListItem';
 import { useSelector } from 'react-redux';
-import { getContacts, getFilterValue } from 'redux/actions';
+import { selectVisibleContacts, selectContactsLoading } from 'redux/selectors';
+import { InfinitySpin } from 'react-loader-spinner';
+
 import { StyledList } from './UserList.styled';
 
 export default function ContactList() {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilterValue);
-
-  const visibleContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter)
-  );
+  const contacts = useSelector(selectVisibleContacts);
+  const isLoading = useSelector(selectContactsLoading);
 
   return (
     <>
       <ContactFilter />
-      {visibleContacts.length > 0 ? (
+      {isLoading && <InfinitySpin width="200" color="#4fa94d" />}
+      {contacts.length > 0 && (
         <StyledList>
-          {visibleContacts.map(contact => (
+          {contacts.map(contact => (
             <li key={contact.id}>
               <ContactListItem contact={contact} />
             </li>
           ))}
         </StyledList>
-      ) : (
-        <p>Sorry, no contacts found...</p>
       )}
     </>
   );
